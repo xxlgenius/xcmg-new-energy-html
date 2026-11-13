@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>徐工新能源 · 全场景全工况产业大屏</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="stage">
+    <!-- 顶部装饰条 + 左右侧边框装饰 -->
+    <div class="top-deco"></div>
+    <div class="side-border side-left"></div>
+    <div class="side-border side-right"></div>
+
+    <!-- 左屏 · 产品型谱 -->
+    <section id="panel-left" class="panel" style="--panel-w: 2014px">
+      <header class="panel-header">
+        <div class="panel-title"><i class="diamond"></i><b>全场景全工况产品型谱</b></div>
+        <div class="panel-sub">Full-scenario &amp; Full-condition Product Spectrum</div>
+      </header>
+      <div class="panel-body" id="left-body"><!-- js/left.js 渲染 --></div>
+    </section>
+
+    <!-- 中屏 · 精益制造 -->
+    <section id="panel-center" class="panel" style="--panel-w: 2414px">
+      <header class="mf-header">
+        <i class="diamond"></i>
+        <div class="mf-hmain">
+          <b>新能源产线大屏</b>
+          <span>Lean Intelligent Manufacturing Operation Capability</span>
+        </div>
+        <div class="mf-hdeco"></div>
+      </header>
+      <div class="panel-body" id="center-body"><!-- js/middle.js 渲染 --></div>
+    </section>
+
+    <!-- 右屏 · 场景解决方案 -->
+    <section id="panel-right" class="panel" style="--panel-w: 2083px">
+      <header class="panel-header">
+        <div class="panel-title"><i class="diamond"></i><b>多工况解决方案</b></div>
+        <div class="panel-sub">Multi-Scenario &amp; Multi-Working Condition Solution</div>
+      </header>
+      <div class="panel-body" id="right-body"><!-- js/right.js 渲染 --></div>
+    </section>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/gestures.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/left.js"></script>
+  <script src="js/middle.js"></script>
+  <script src="js/right.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
