@@ -898,7 +898,7 @@ window.DATA = {
       }
     ],
     "twin": {
-      "video": "assets/videos/twin.mov",
+      "video": "assets/videos/twin.mp4",
       "poster": "assets/images/twin-poster.png",
       "placeholder": true
     },
@@ -1012,7 +1012,7 @@ window.DATA = {
       "id": "factory",
       "name": "工厂施工",
       "type": "video",
-      "src": "assets/videos/scenario/factory.mov",
+      "src": "assets/videos/scenario/factory.mp4",
       "poster": null,
       "placeholder": false
     },

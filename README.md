@@ -22,7 +22,10 @@ py tools/serve.py 8765        # 或 python -m http.server 8765
 # 浏览器打开 http://127.0.0.1:8765
 
 # 方式二: 直接双击 index.html (file:// 协议同样可用)
+# 方式三: 双击 启动大屏.bat —— Edge/Chrome 全屏 kiosk 打开 (现场大屏用)
 ```
+
+**新机器部署**: git clone 本仓库后双击 `启动大屏.bat` 即可运行 (全部素材含视频都在仓库内, 无需额外步骤)。
 
 页面按 7040×1800 固定画布设计，任意窗口尺寸等比缩放显示；LED 控制端浏览器全屏（F11 或 `--kiosk`）时 1:1 像素呈现。
 
@@ -68,5 +71,5 @@ py tools/extract-ppt-assets.py --pptx "PPT路径" [--skip-videos] [--skip-images
 
 - 视频统一 `muted + loop`：浏览器自动播放策略无碍，符合大屏讲解场景；
 - 视频播放失败时自动降级为封面图/占位提示，不阻塞页面；
-- `assets/videos/` 约 1GB 不进 git，部署前运行抽取脚本或手动拷贝该目录；
+- 视频已统一转码为 H.264 mp4（`tools/compress-videos.py`，单文件低于 GitHub 100MB 限制）并随仓库托管；重新抽取素材后执行该脚本压缩即可；
 - 触摸手势已通过 PointerEvents 触摸模拟验证，正式红外触屏实机验收待现场进行。

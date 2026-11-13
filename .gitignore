@@ -1,4 +1,2 @@
-# 大体量视频由 tools/extract-ppt-assets.py 从源 PPT 重新生成, 不进 git
-assets/videos/
 # Python
 __pycache__/

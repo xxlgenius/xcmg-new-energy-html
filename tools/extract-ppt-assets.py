@@ -12,13 +12,15 @@ extract-ppt-assets.py — 从源 PPT 抽取 LED 大屏页面所需的全部素�
     js/data.js          window.DATA 全量数据（页面唯一数据源）
 
 素材映射依据: openspec/changes/led-bigscreen-page/design.md D11 映射表。
-仅依赖 Python 标准库; Pillow 仅用于背景裁剪合成（缺失时跳过背景生成并告警）。
+仅依赖 Python 标准库; Pillow 用于背景裁剪合成（缺失时跳过）; imageio-ffmpeg 用于视频压缩
+（缺失时视频保持原始格式, GitHub 托管需执行 tools/compress-videos.py 手动压缩）。
 """
 import argparse
 import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -331,13 +333,26 @@ def extract_assets(pptx, out, skip_videos, skip_images):
             copy_media(zf, "image12.png", os.path.join(scen_img_dir, "water.png"))
             copy_media(zf, "image54.png", os.path.join(images_dir, "detail-glow.png"))
             make_background(zf, work, out)
-        if not skip_videos:                            # 视频
+        if not skip_videos:                            # 视频 (原始拷贝, 压缩见下)
             for (_, media, _, _, _), slug in zip(SCENARIOS, SCENARIO_SLUGS):
                 copy_media(zf, media, os.path.join(scen_vid_dir, f"{slug}.{media.rsplit('.',1)[-1]}"))
             for name, media, slug in TECHS:
                 copy_media(zf, media, os.path.join(tech_vid_dir, f"{slug}.{media.rsplit('.',1)[-1]}"))
             copy_media(zf, "media3.mov", os.path.join(out, "assets/videos/twin.mov"))  # 孪生占位
+        if not skip_videos:
+            compress_videos(out)
     shutil.rmtree(work, ignore_errors=True)
+
+
+def compress_videos(out):
+    """抽取后转码压缩 (统一 mp4 / 低于 GitHub 100MB 限), 需 imageio-ffmpeg"""
+    try:
+        import imageio_ffmpeg  # noqa: F401
+    except ImportError:
+        print("[WARN] 未安装 imageio-ffmpeg, 视频保持原始格式; 建议执行: py -m pip install imageio-ffmpeg 后重跑 --skip-images --skip-data")
+        return
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "compress-videos.py")
+    subprocess.run([sys.executable, script], cwd=out)
 
 
 # ------------------------------------------------------------ 数据生成 ----
@@ -358,18 +373,18 @@ def build_data(details):
             },
         })
 
+    # 视频路径统一指向 .mp4 (extract 后由 tools/compress-videos.py 转码, 保持容器与扩展名一致)
     scenarios = []
     for (name, media, typ, poster, ph), slug in zip(SCENARIOS, SCENARIO_SLUGS):
-        ext = media.rsplit(".", 1)[-1]
         scenarios.append({
             "id": slug, "name": name, "type": typ,
-            "src": f"assets/videos/scenario/{slug}.{ext}" if typ == "video" else None,
+            "src": f"assets/videos/scenario/{slug}.mp4" if typ == "video" else None,
             "poster": f"assets/images/scenario/{slug}.png" if poster else None,
             "placeholder": ph,
         })
 
     techs = [{"id": slug, "name": name,
-              "video": f"assets/videos/tech/{slug}.{media.rsplit('.',1)[-1]}"}
+              "video": f"assets/videos/tech/{slug}.mp4"}
              for name, media, slug in TECHS]
 
     comps = [{"id": slug, "name": name, "img": f"assets/images/components/{slug}.png"}
@@ -388,7 +403,7 @@ def build_data(details):
                 {"value": "5", "suffix": "", "label": "智能混线", "en": "M&P Line", "icon": "bulb"},
                 {"value": "10000", "suffix": "+", "label": "制造产能", "en": "Production capacity", "icon": "gears"},
             ],
-            "twin": {"video": "assets/videos/twin.mov",
+            "twin": {"video": "assets/videos/twin.mp4",
                      "poster": "assets/images/twin-poster.png", "placeholder": True},
             "techs": techs,
             "components": {"selfCount": 8, "exclusiveCount": 3, "items": comps},
